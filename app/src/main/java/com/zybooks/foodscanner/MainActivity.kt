@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +25,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             FoodScannerTheme {
                 Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
-                    InputTable(modifier = Modifier.padding(innerPadding))
+                   Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                       InputTable(modifier = Modifier.align(Alignment.Center))
+                   }
                 }
             }
         }
