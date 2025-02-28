@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.zybooks.foodscanner"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.zybooks.foodscanner"
@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -57,6 +57,4 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // Added implementation for viewmodel compose
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
 }
