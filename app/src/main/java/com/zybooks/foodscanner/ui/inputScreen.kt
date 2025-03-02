@@ -206,5 +206,6 @@ fun InputTable(modifier: Modifier = Modifier, viewModel: InputViewModel = viewMo
         }) {
             Text("Add")
         }
+        ImagePicker()
     }}
 }

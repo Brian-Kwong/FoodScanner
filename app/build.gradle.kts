@@ -37,10 +37,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources.excludes.add("**/*.tflite")
+    }
 }
 
 dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.tensorflow.lite.task.vision)
     implementation(libs.ui)
     implementation(libs.material3)
     implementation(libs.androidx.core.ktx)
@@ -51,6 +56,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.media3.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
