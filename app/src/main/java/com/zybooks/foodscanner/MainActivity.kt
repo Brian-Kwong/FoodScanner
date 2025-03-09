@@ -16,6 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.zybooks.foodscanner.ui.AddViewModel
+import com.zybooks.foodscanner.ui.CameraScreen
+import com.zybooks.foodscanner.ui.IngredientListScreen
+import com.zybooks.foodscanner.ui.IngredientTable
+import com.zybooks.foodscanner.ui.RecipeScreenViewModel
 import com.zybooks.foodscanner.ui.theme.FoodScannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +31,7 @@ class MainActivity : ComponentActivity() {
             FoodScannerTheme {
                 Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                       InputTable(modifier = Modifier.align(Alignment.Center))
+                        IngredientListScreen(Modifier, viewModel = AddViewModel())
                    }
                 }
             }
