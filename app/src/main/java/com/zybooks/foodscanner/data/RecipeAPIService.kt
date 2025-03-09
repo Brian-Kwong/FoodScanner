@@ -19,6 +19,10 @@ interface RecipeAPI{
 class RecipeAPIService (val service: RecipeAPI){
 
     suspend fun getRecipes(apiKey: String, ingredient: String): RecipeList {
+        Log.i("RecipeAPIService", "getRecipes")
+        Log.i("RecipeAPIService", "apiKey: $apiKey")
+        Log.i("RecipeAPIService", "ingredient: $ingredient")
+        Log.i("Response", service.getRecipes(apiKey, ingredient).toString())
         return service.getRecipes(apiKey, ingredient)
     }
 

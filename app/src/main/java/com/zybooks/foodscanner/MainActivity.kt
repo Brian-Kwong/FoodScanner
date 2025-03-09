@@ -16,11 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.zybooks.foodscanner.ui.AddViewModel
-import com.zybooks.foodscanner.ui.CameraScreen
+import com.zybooks.foodscanner.ui.HomeScreen
 import com.zybooks.foodscanner.ui.IngredientListScreen
 import com.zybooks.foodscanner.ui.IngredientTable
-import com.zybooks.foodscanner.ui.RecipeScreenViewModel
 import com.zybooks.foodscanner.ui.theme.FoodScannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,10 +31,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FoodScannerTheme {
-                Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
-                   Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                        IngredientListScreen(Modifier, viewModel = AddViewModel())
-                   }
+                App(Modifier)
+            }
+        }
+    }
+}
+
+@Composable
+fun App(modifier: Modifier) {
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
+                Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                   HomeScreen(modifier, onIngredientScreenClick = {navController.navigate("input")})
+                }
+            }
+        }
+        composable("input") {
+            Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
+                Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                    IngredientListScreen(Modifier, viewModel = AddViewModel())
                 }
             }
         }
