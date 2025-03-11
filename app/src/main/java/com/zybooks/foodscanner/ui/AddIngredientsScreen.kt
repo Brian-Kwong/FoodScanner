@@ -1,36 +1,32 @@
 package com.zybooks.foodscanner.ui
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.zybooks.foodscanner.R
 import com.zybooks.foodscanner.data.Ingredients
 import com.zybooks.foodscanner.data.RecipeAPI
 import com.zybooks.foodscanner.data.RecipeAPIService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -81,10 +77,16 @@ fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Uni
 }
 
 @Composable
-fun IngredientListScreen(modifier: Modifier = Modifier, viewModel: AddViewModel, onRecipeListNavigate: () -> Unit = { }){
+fun IngredientListScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AddViewModel,
+    recipeViewModel: RecipeViewModel,
+    onRecipeListNavigate: () -> Unit = { },
+    onUpClick: () -> Boolean
+){
 
-    val couroutine = rememberCoroutineScope()
-    val apiKey = stringResource(R.string.recipe_api_key)
+    val couroutine = remember  { CoroutineScope(Dispatchers.IO)}
+    val apiKey = stringResource(R.string.api_key)
 
     val recipeAPIService: RecipeAPI by lazy {
         val retrofit: Retrofit = Retrofit.Builder()
@@ -107,7 +109,14 @@ fun IngredientListScreen(modifier: Modifier = Modifier, viewModel: AddViewModel,
         var ingredientString = ""
         ingredients.forEach { ingredient -> ingredientString += "${ingredient.name}," }
         if (viewModel.ingredientsList.isNotEmpty()){
-            couroutine.launch { recipeAPI.getRecipes(apiKey, ingredientString) }
+
+
+            couroutine.launch {
+                recipeViewModel.setLoadingStatus(true)
+                val recipes = recipeAPI.getRecipes(apiKey, ingredientString)
+                recipeViewModel.setRecipes(recipes)
+                recipeViewModel.setLoadingStatus(false)
+            }
             onRecipeListNavigate()
         }
     }

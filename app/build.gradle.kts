@@ -60,5 +60,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.activity.compose.v131)
+    implementation(libs.kotlinx.coroutines.android)
     // Added implementation for viewmodel compose
 }
