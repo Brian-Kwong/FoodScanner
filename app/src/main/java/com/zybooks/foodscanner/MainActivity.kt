@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -22,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zybooks.foodscanner.ui.AddViewModel
+import com.zybooks.foodscanner.ui.DetailedRecipeScreen
 import com.zybooks.foodscanner.ui.HomeScreen
 import com.zybooks.foodscanner.ui.IngredientListScreen
 import com.zybooks.foodscanner.ui.RecipeTableScreen
@@ -49,6 +51,8 @@ fun App(modifier: Modifier) {
     val recipeViewModel : RecipeViewModel = viewModel(
         viewModelStoreOwner = LocalViewModelStoreOwner.current!!,
     )
+    recipeViewModel.setAPIKey(stringResource(R.string.api_key))
+
 
 
     NavHost(navController = navController, startDestination = "home") {
@@ -69,7 +73,16 @@ fun App(modifier: Modifier) {
         composable("recipe-list") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    RecipeTableScreen(Modifier, recipeViewModel , onUpClick = {navController.navigateUp()})
+                    RecipeTableScreen(Modifier, recipeViewModel , onRecipeClick = {
+                        navController.navigate("detailed-recipe")
+                    }, onUpClick = {navController.navigateUp()})
+                }
+            }
+        }
+        composable("detailed-recipe") {
+            Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
+                Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier)
                 }
             }
         }

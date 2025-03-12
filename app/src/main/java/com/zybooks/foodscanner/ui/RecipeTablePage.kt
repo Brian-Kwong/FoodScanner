@@ -2,18 +2,14 @@ package com.zybooks.foodscanner.ui
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -33,29 +29,18 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.zybooks.foodscanner.R
-import com.zybooks.foodscanner.data.RecipeAPI
-import com.zybooks.foodscanner.data.RecipeAPIService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-// Create a card component that will display search resiults
+// Create a card component that will display search results
 // On the left side would be the image of the recipe
-// On the right will be  a column with the title of the recipe, and details about the meail each on their own row
+// On the right will be  a column with the title of the recipe, and details about the mail each on their own row
 
 @Composable
 fun CreateRecipeCard(
     recipe: Recipe,
-    apiRouter : RecipeAPIService,
-    apiKey : String,
-    corountine: CoroutineScope,
+    viewModel: RecipeViewModel,
+    onClickAction: () -> Unit = {},
     modifier: Modifier
 ) {
 
@@ -64,12 +49,9 @@ fun CreateRecipeCard(
             .padding(10.dp)
             .fillMaxSize(),
         onClick = {
-
-            corountine.launch {
-                val recipeDetails = apiRouter.getRecipeInformation(apiKey, recipe.id.toString())
-                Log.d("RecipeTableScreen", "Recipe Details: $recipeDetails")
-            }
-
+            viewModel.fetchSelectedRecipe(recipe.id.toString())
+            Log.d("RecipeTablePage", "Recipe clicked")
+            onClickAction()
         }
     ) {
         Row(
@@ -141,20 +123,7 @@ fun RecipeTopBar(
 
 
 @Composable
-fun RecipeTableScreen(modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit) {
-
-    val apiKey = stringResource(R.string.api_key)
-    val couroutine = remember  { CoroutineScope(Dispatchers.IO) }
-
-    val recipeAPIService: RecipeAPI by lazy {
-        val retrofit: Retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/")
-            .build()
-        retrofit.create(RecipeAPI::class.java)
-    }
-
-    val recipeAPI = RecipeAPIService(recipeAPIService)
+fun RecipeTableScreen(modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
 
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         if (viewModel.loadingStatus.collectAsState().value || viewModel.recipes.isEmpty()) {
@@ -164,7 +133,7 @@ fun RecipeTableScreen(modifier: Modifier, viewModel: RecipeViewModel, onUpClick:
             // Center Text
             LazyColumn(modifier = modifier.fillMaxSize()) {
                 items(viewModel.recipes.size) { index ->
-                    CreateRecipeCard(recipe = viewModel.recipes[index], recipeAPI,apiKey,couroutine, modifier = modifier)
+                    CreateRecipeCard(recipe = viewModel.recipes[index], viewModel, onRecipeClick, modifier = modifier)
                 }
             }
         }
