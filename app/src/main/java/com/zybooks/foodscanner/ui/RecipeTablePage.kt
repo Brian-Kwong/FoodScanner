@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 
 // Create a card component that will display search results
 // On the left side would be the image of the recipe
@@ -99,7 +100,7 @@ fun RecipeTopBar(
     TopAppBar(
         title = {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Text(text = title)
+                Text(text = title, overflow = TextOverflow.Ellipsis, maxLines = 1)
 
             }
         },
@@ -129,7 +130,7 @@ fun RecipeTableScreen(modifier: Modifier, viewModel: RecipeViewModel, onUpClick:
         if (viewModel.loadingStatus.collectAsState().value || viewModel.recipes.isEmpty()) {
             LoadingScreen(modifier = modifier)
         } else {
-            RecipeTopBar(title = "Recipes", canNavigateBack = true, onUpClick = {})
+            RecipeTopBar(title = "Recipes", canNavigateBack = true, onUpClick = onUpClick)
             // Center Text
             LazyColumn(modifier = modifier.fillMaxSize()) {
                 items(viewModel.recipes.size) { index ->

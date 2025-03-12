@@ -82,7 +82,7 @@ fun App(modifier: Modifier) {
         composable("detailed-recipe") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier)
+                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, UpClick = {navController.navigateUp()})
                 }
             }
         }
