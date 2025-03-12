@@ -69,6 +69,7 @@ fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Uni
         Button(onClick = {}) {
             Text("Through Camera")
         }
+        ImagePicker()
         Button(onClick = {onIngredientScreenClick()}, modifier = modifier.align(Alignment.CenterHorizontally)) {
             Text("Through Text")
         }

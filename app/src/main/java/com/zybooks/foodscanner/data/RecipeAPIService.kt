@@ -35,7 +35,6 @@ class RecipeAPIService (private val service: RecipeAPI) {
         Log.i("RecipeAPIService", "getRecipes")
         Log.i("RecipeAPIService", "apiKey: $apiKey")
         Log.i("RecipeAPIService", "ingredient: $ingredient")
-        Log.i("Response", service.getRecipes(apiKey, ingredient).toString())
         val recipeList  = service.getRecipes(apiKey, ingredient)
         return recipeList
     }
@@ -48,7 +47,6 @@ class RecipeAPIService (private val service: RecipeAPI) {
         Log.i("RecipeAPIService", "getRecipeInformation")
         Log.i("RecipeAPIService", "apiKey: $apiKey")
         Log.i("RecipeAPIService", "ids: $ids")
-        Log.i("Response", service.getRecipeInformationBulk(apiKey, ids).toString())
         val recipeDetailsList = service.getRecipeInformationBulk(apiKey, ids)
         return recipeDetailsList
     }
@@ -58,7 +56,6 @@ class RecipeAPIService (private val service: RecipeAPI) {
         Log.i("RecipeAPIService", "getRecipeInformation")
         Log.i("RecipeAPIService", "apiKey: $apiKey")
         Log.i("RecipeAPIService", "ids: $id")
-        Log.i("Response", service.getRecipeInformation(apiKey, id).toString())
         val recipeDetails = service.getRecipeInformation(apiKey, id)
         return recipeDetails
 
