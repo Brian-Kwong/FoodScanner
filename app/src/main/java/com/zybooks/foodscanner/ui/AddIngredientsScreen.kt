@@ -31,42 +31,13 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-//sealed class Routes{
-//
-//    @Serializable
-//    data object HomeScreen
-//
-//    @Serializable
-//    data object IngredientList
-//
-//    @Serializable
-//    data object RecipeList
-//}
-//
-//@Composable
-//fun MealApp(modifier: Modifier){
-//    val navController = rememberNavController()
-//
-//    NavHost(navController = navController, startDestination = Routes.HomeScreen)  {
-//        composable<Routes.HomeScreen> {
-//            HomeScreen(modifier, onIngredientScreenClick = {navController.navigate(Routes.IngredientList)})
-//        }
-//        composable<Routes.IngredientList> {
-//            IngredientListScreen(modifier, AddViewModel(), onUpClick = {navController.navigateUp()}, onRecipeListNavigate = {navController.navigate(Routes.RecipeList)})
-//        }
-//        composable<Routes.RecipeList> {
-//
-//        }
-//
-//    }
-//}
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Unit = { } ){
+fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Unit = { }, onCameraScreenClick: () -> Unit = { } ){
 
     Column(horizontalAlignment=Alignment.CenterHorizontally) {
         Text("How would you like to add ingredients?")
-        Button(onClick = {}) {
+        Button(onClick = {onCameraScreenClick()}) {
             Text("Through Camera")
         }
         ImagePicker()
