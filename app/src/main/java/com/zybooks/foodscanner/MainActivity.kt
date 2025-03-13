@@ -23,6 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zybooks.foodscanner.ui.AddViewModel
+import com.zybooks.foodscanner.ui.CameraScreen
+import com.zybooks.foodscanner.ui.CameraScreenViewModel
 import com.zybooks.foodscanner.ui.DetailedRecipeScreen
 import com.zybooks.foodscanner.ui.HomeScreen
 import com.zybooks.foodscanner.ui.IngredientListScreen
@@ -46,6 +48,8 @@ class MainActivity : ComponentActivity() {
 fun App(modifier: Modifier) {
     val navController = rememberNavController()
 
+    val cameraScreenViewModel = CameraScreenViewModel()
+
     // Create s shared recipe view model to store recipes
     // Made by nav host to be able to pass it to the screens
     val recipeViewModel : RecipeViewModel = viewModel(
@@ -59,7 +63,7 @@ fun App(modifier: Modifier) {
         composable("home") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                   HomeScreen(modifier, onIngredientScreenClick = {navController.navigate("input")})
+                   HomeScreen(modifier, onIngredientScreenClick = {navController.navigate("input")}, onCameraScreenClick = {navController.navigate("take-picture-camera")})
                 }
             }
         }
@@ -86,6 +90,14 @@ fun App(modifier: Modifier) {
                 }
             }
         }
+        composable("take-picture-camera") {
+            Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
+                Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                    CameraScreen(cameraScreenViewModel = cameraScreenViewModel)
+                }
+            }
+        }
+
 
     }
 }
