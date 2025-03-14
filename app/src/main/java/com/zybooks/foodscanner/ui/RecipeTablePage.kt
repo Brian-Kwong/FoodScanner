@@ -124,7 +124,11 @@ fun RecipeTopBar(
 
 
 @Composable
-fun RecipeTableScreen(modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
+fun RecipeTableScreen(param: String? ,modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
+
+    if (param != null && viewModel.recipes.isEmpty() && !viewModel.loadingStatus.collectAsState().value) {
+        viewModel.fetchRecipeInformation(param)
+    } // Fetch recipes based on the provided parameters (ingredients)
 
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         if (viewModel.loadingStatus.collectAsState().value || viewModel.recipes.isEmpty()) {

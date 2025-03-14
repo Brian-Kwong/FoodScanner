@@ -34,11 +34,8 @@ class RecipeViewModel(): ViewModel() {
         retrofit.create(RecipeAPI::class.java)
     }
 
-    val recipeAPI = RecipeAPIService(recipeAPIService)
+    private val recipeAPI = RecipeAPIService(recipeAPIService)
 
-    fun addRecipe(recipe: Recipe){
-        recipes.add(recipe)
-    }
 
     fun setAPIKey(apiKey : String){
         this.apiKey = apiKey
@@ -52,6 +49,20 @@ class RecipeViewModel(): ViewModel() {
 
     fun setLoadingStatus(status: Boolean){
         _loading.value = status
+    }
+
+    fun clearRecipes(){
+        recipes.clear()
+    }
+
+    fun fetchRecipeInformation(ingredientString : String){
+        coroutine.launch {
+            _loading.value = true
+            val results = recipeAPI.getRecipes(apiKey, ingredientString)
+            recipes.clear()
+            recipes.addAll(results)
+            _loading.value = false
+        }
     }
 
     fun fetchSelectedRecipe(recipeId: String){

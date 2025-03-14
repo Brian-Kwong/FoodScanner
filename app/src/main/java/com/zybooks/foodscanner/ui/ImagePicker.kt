@@ -12,32 +12,56 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.zybooks.foodscanner.data.Ingredients
 import com.zybooks.foodscanner.processImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun ImagePicker(){
+fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
 
-    var imageUUri  by remember  { mutableStateOf("") }
+    val imageUUri  by remember  { mutableStateOf("") }
+
+
     val context = LocalContext.current
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        // Callback is invoked after the user selects a media item or closes the
-        // photo picker.
+        // Callback is invoked after the user selects a media item or closes the picker
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             // Returns the URI of the selected media item
-            processImage(uri, context)
+                val results = processImage(uri, context)
+                val filteredResults = results.map {
+                    // Get the category for each result
+                    val label = it.categories.firstOrNull()?.label ?: "Unknown"
+                    label.split("-")[0] // Split to get the main
+                }.filter {
+                    // Filter unwanted labels
+                    it != "Unknown"
+                }
+
+                // Convert the list of labels to a map with counts
+                // Sort by count descending and take the top 3
+                // Take the first 3 labels to avoid too many results
+                val resultCount = filteredResults.groupingBy { it }.eachCount().entries.sortedBy {
+                    it.value
+                }.reversed().take(3).associate {
+                    it.key to it.value
+                }.toString().replace("{", "").replace("}", "")
+            navigateToIngredients(resultCount)
+
 
         } else {
+            // Returns null if the user didn't select any media
             Log.d("PhotoPicker", "No media selected")
         }
     }
 
-    val mimeType = "image/*"
+    val fileType = "image/*"
 
     // Button for selecting an image
     Button(onClick = {
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.SingleMimeType(mimeType)))
-        Log.d("PhotoPicker2", imageUUri)
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.SingleMimeType(fileType)))
     }) {
         Text("Select Image")
     }

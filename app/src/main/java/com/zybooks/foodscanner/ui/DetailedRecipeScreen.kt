@@ -137,18 +137,20 @@ fun InstructionsPage(recipeDetails: RecipeDetails) {
 
 @Composable
 fun IngredientEntry(ingredient: RecipeDetails.IngredientsDetails, index : Int) {
-    Row (modifier = Modifier.fillMaxWidth()){
+    Row (modifier = Modifier.fillMaxWidth().padding(5.dp)) {
         Box(modifier = Modifier.weight(1f))
         {
             Text(text = index.toString(), fontWeight = FontWeight.Bold)
         }
+        Spacer(modifier = Modifier.size(5.dp))
         Box(modifier = Modifier.weight(5f))
         {
             Text(text = ingredient.name)
         }
+        Spacer(modifier = Modifier.size(5.dp))
         Box(modifier = Modifier.weight(2f))
         {
-            Text(text = ingredient.unit)
+            Text(text =  ingredient.amount.toString() + " " +  ingredient.unit)
         }
     }
 }
@@ -169,12 +171,23 @@ fun DetailEntry(title: String, value: String) {
 
 @Composable
 fun DetailsPage(recipeDetails: RecipeDetails){
+
+
+
     LazyColumn {
         item {
             DetailEntry("Title", recipeDetails.title)
             DetailEntry("Summary", recipeDetails.summary)
-            DetailEntry("Cuisine", if (recipeDetails.cuisines.isNotEmpty()) recipeDetails.cuisines.joinToString { ", " } else "N/A")
-            DetailEntry("Dish Types", if (recipeDetails.dishTypes.isNotEmpty()) recipeDetails.dishTypes.joinToString { ", " } else "N/A")
+            DetailEntry("Cuisine", if (recipeDetails.cuisines.isNotEmpty() || recipeDetails.cuisines.any {
+                    it.isNotEmpty()
+                }) recipeDetails.cuisines.filter{
+                    it.isNotEmpty()
+            }.joinToString { ", " } else "N/A")
+            DetailEntry("Dish Types", if (recipeDetails.dishTypes.isNotEmpty() || recipeDetails.dishTypes.any {
+                    it.isNotEmpty()
+                }) recipeDetails.dishTypes.filter{
+                    it.isNotEmpty()
+            }.joinToString { ", " } else "N/A")
             DetailEntry("Health Score", recipeDetails.healthScore.toString())
             DetailEntry("Ready in", recipeDetails.readyInMinutes.toString())
             DetailEntry("Servings", recipeDetails.servings.toString())

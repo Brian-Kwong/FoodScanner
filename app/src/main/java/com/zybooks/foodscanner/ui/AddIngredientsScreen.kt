@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -13,35 +15,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.zybooks.foodscanner.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.zybooks.foodscanner.data.Ingredients
-import com.zybooks.foodscanner.data.RecipeAPI
-import com.zybooks.foodscanner.data.RecipeAPIService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Unit = { }, onCameraScreenClick: () -> Unit = { } ){
+fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: (String) -> Unit = { }, onCameraScreenClick: () -> Unit = { } ){
 
     Column(horizontalAlignment=Alignment.CenterHorizontally) {
         Text("How would you like to add ingredients?")
         Button(onClick = {onCameraScreenClick()}) {
             Text("Through Camera")
         }
-        ImagePicker()
-        Button(onClick = {onIngredientScreenClick()}, modifier = modifier.align(Alignment.CenterHorizontally)) {
+        ImagePicker(onIngredientScreenClick)
+        Button(onClick = {onIngredientScreenClick("")}, modifier = modifier.align(Alignment.CenterHorizontally)) {
             Text("Through Text")
         }
     }
@@ -50,78 +44,87 @@ fun HomeScreen(modifier: Modifier = Modifier, onIngredientScreenClick: () -> Uni
 
 @Composable
 fun IngredientListScreen(
+    scannedIngredients: String,
     modifier: Modifier = Modifier,
-    viewModel: AddViewModel,
-    recipeViewModel: RecipeViewModel,
-    onRecipeListNavigate: () -> Unit = { },
-    onUpClick: () -> Boolean
+    viewModel : AddViewModel,
+    onRecipeListNavigate: (String) -> Unit = { },
+    onUpClick: () -> Unit = {  }
 ){
 
-    val couroutine = remember  { CoroutineScope(Dispatchers.IO)}
-    val apiKey = stringResource(R.string.api_key)
-
-    val recipeAPIService: RecipeAPI by lazy {
-        val retrofit: Retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/")
-            .build()
-        retrofit.create(RecipeAPI::class.java)
-    }
-
-    val recipeAPI = RecipeAPIService(recipeAPIService)
 
     fun handleSaveIngredients(){
-        val newIngredient: Ingredients = Ingredients(viewModel.inputIngredientName, viewModel.quantityInput + " " + viewModel.units)
+        val newIngredient = Ingredients(viewModel.inputIngredientName, viewModel.quantityInput + " " + viewModel.units)
         viewModel.addIngredient(newIngredient)
         viewModel.setShowInput()
     }
 
-    fun handleRouteToRecipe(ingredients: MutableList<Ingredients>){
+    fun handleRouteToRecipe(ingredients: List<Ingredients>){
 
         var ingredientString = ""
         ingredients.forEach { ingredient -> ingredientString += "${ingredient.name}," }
         if (viewModel.ingredientsList.isNotEmpty()){
-
-
-            couroutine.launch {
-                recipeViewModel.setLoadingStatus(true)
-                val recipes = recipeAPI.getRecipes(apiKey, ingredientString)
-                recipeViewModel.setRecipes(recipes)
-                recipeViewModel.setLoadingStatus(false)
-            }
-            onRecipeListNavigate()
+            onRecipeListNavigate(ingredientString)
         }
     }
 
-
-    Column (horizontalAlignment = Alignment.CenterHorizontally) {
-        IngredientTable(modifier, viewModel)
-        Spacer(Modifier.size(100.dp))
-        if (!viewModel.showInput){
-            Column (horizontalAlignment = Alignment.CenterHorizontally ){
-                Button(onClick = {viewModel.setShowInput()}) {
-                    Text("Add More")
+    if (scannedIngredients != "" && !viewModel.addedScanIngredients) {
+        val ingredients = scannedIngredients.split(",").map { it.trim() }
+        ingredients.forEach { ingredient ->
+            val ingredientCountPair = ingredient.split("=")
+            val newIngredient = Ingredients(ingredientCountPair[0], ingredientCountPair[1])
+            viewModel.addIngredient(newIngredient)
+        }
+        viewModel.addedScanIngredients = true
+    }
+    Column(modifier = modifier.fillMaxSize()) {
+        RecipeTopBar(
+            title = "Add Ingredients",
+            modifier = modifier,
+            canNavigateBack = true,
+            onUpClick = {
+                onUpClick() }
+        )
+        Column(modifier = modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally,  verticalArrangement = Arrangement.Center) {
+            IngredientTable(modifier, viewModel)
+            Spacer(Modifier.size(100.dp))
+            if (!viewModel.showInput) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button(onClick = { viewModel.setShowInput() }) {
+                        Text("Add More")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList) }) {
+                        Text("Submit")
+                    }
                 }
-                Button(onClick = {handleRouteToRecipe(viewModel.ingredientsList)}) {
-                    Text("Submit")
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    TextField(
+                        value = viewModel.inputIngredientName,
+                        onValueChange = { name -> viewModel.updateName(name) },
+                        label = { Text("Ingredient") })
+                    TextField(
+                        value = viewModel.quantityInput,
+                        onValueChange = { quantity -> viewModel.updateQuantity(quantity) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = { Text("Amount") })
+                    TextField(
+                        value = viewModel.units,
+                        onValueChange = { unit -> viewModel.updateUnits(unit) },
+                        label = { Text("Units of Measurement") })
+                    Button(onClick = { handleSaveIngredients() }) {
+                        Text("Save")
+                    }
+                    Button(onClick = { viewModel.setShowInput() }) {
+                        Text("Cancel")
+                    }
+
                 }
             }
-        }
-        else{
-            Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                TextField(value = viewModel.inputIngredientName, onValueChange = {name -> viewModel.updateName(name)}, label = { Text("Ingredient")})
-                TextField(value = viewModel.quantityInput, onValueChange = {quantity -> viewModel.updateQuantity(quantity)}, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), label = { Text("Amount")})
-                TextField(value = viewModel.units, onValueChange = {unit -> viewModel.updateUnits(unit)}, label = { Text("Units of Measurement")})
-                Button(onClick = {handleSaveIngredients()}) {
-                    Text("Save")
-                }
-                Button(onClick = {viewModel.setShowInput()}) {
-                    Text("Cancel")
-                }
 
-            }
         }
-
     }
 
 }
@@ -141,10 +144,11 @@ fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
 
     Column(verticalArrangement = Arrangement.SpaceAround, horizontalAlignment = Alignment.CenterHorizontally ){
         Row(modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-            Text("Ingredient Name")
+            Text("Ingredient Name", fontWeight = FontWeight.Bold)
             Spacer(Modifier.size(20.dp))
-            Text("Ingredient Amount")
+            Text("Ingredient Amount", fontWeight = FontWeight.Bold)
         }
+        Spacer(Modifier.height(10.dp))
         if (viewModel.ingredientsList.isEmpty()){
             Text("Let's add some ingredients!")
         }

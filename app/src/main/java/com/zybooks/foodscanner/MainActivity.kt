@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.zybooks.foodscanner.ui.AddViewModel
 import com.zybooks.foodscanner.ui.CameraScreen
 import com.zybooks.foodscanner.ui.CameraScreenViewModel
@@ -50,8 +51,10 @@ fun App(modifier: Modifier) {
 
     val cameraScreenViewModel = CameraScreenViewModel()
 
-    // Create s shared recipe view model to store recipes
-    // Made by nav host to be able to pass it to the screens
+    val addViewModel : AddViewModel = viewModel(
+        viewModelStoreOwner = LocalViewModelStoreOwner.current!!,
+    )
+
     val recipeViewModel : RecipeViewModel = viewModel(
         viewModelStoreOwner = LocalViewModelStoreOwner.current!!,
     )
@@ -63,30 +66,40 @@ fun App(modifier: Modifier) {
         composable("home") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                   HomeScreen(modifier, onIngredientScreenClick = {navController.navigate("input")}, onCameraScreenClick = {navController.navigate("take-picture-camera")})
+                   HomeScreen(modifier, onIngredientScreenClick = {
+                       addViewModel.addedScanIngredients = it.isEmpty()
+                       navController.navigate("input/${it}")}, onCameraScreenClick = {navController.navigate("take-picture-camera")})
                 }
             }
         }
-        composable("input") {
+        composable("input/{scannedIngredients}", arguments = listOf(navArgument("scannedIngredients") { defaultValue = "" })) { backStackEntry ->
+            val scannedIngredients = remember { backStackEntry.arguments?.getString("scannedIngredients") ?: "" }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    IngredientListScreen(Modifier, viewModel = AddViewModel(),recipeViewModel, onRecipeListNavigate = {navController.navigate("recipe-list")}, onUpClick = {navController.navigateUp()})
+                    IngredientListScreen(scannedIngredients, Modifier,addViewModel, onRecipeListNavigate = {
+                        recipeViewModel.clearRecipes()
+                        navController.navigate("recipe-list/${it}")
+                    }, onUpClick = {
+                        navController.navigateUp()})
                 }
             }
         }
-        composable("recipe-list") {
+        composable("recipe-list/{ingredients}", arguments = listOf(navArgument("ingredients") { defaultValue = "" })) { backStackEntry ->
+            val ingredients = remember { backStackEntry.arguments?.getString("ingredients") ?: "" }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    RecipeTableScreen(Modifier, recipeViewModel , onRecipeClick = {
+                    RecipeTableScreen(ingredients, Modifier, recipeViewModel , onRecipeClick = {
                         navController.navigate("detailed-recipe")
-                    }, onUpClick = {navController.navigateUp()})
+                    }, onUpClick = {
+                        navController.navigateUp()})
                 }
             }
         }
         composable("detailed-recipe") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, UpClick = {navController.navigateUp()})
+                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, UpClick = {
+                        navController.navigateUp()})
                 }
             }
         }

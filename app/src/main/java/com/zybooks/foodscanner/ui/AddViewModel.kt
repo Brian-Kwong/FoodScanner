@@ -1,18 +1,23 @@
 package com.zybooks.foodscanner.ui
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.zybooks.foodscanner.data.Ingredients
 
 
 class AddViewModel: ViewModel() {
-    val ingredientsList = mutableListOf<Ingredients>()
+    private val _ingredientsList =  mutableStateListOf<Ingredients>()
+    val ingredientsList: List<Ingredients>
+        get() = _ingredientsList
     var inputIngredientName by mutableStateOf("")
     var quantityInput by mutableStateOf("")
     var units by mutableStateOf("")
     var showInput by mutableStateOf(false)
+    var addedScanIngredients by mutableStateOf(false)
 
     fun updateName(newIngredientName: String){
         inputIngredientName = newIngredientName
@@ -31,7 +36,7 @@ class AddViewModel: ViewModel() {
     }
 
     fun addIngredient(ingredients: Ingredients){
-        ingredientsList.add(ingredients)
+        _ingredientsList.add(ingredients)
     }
 
 }

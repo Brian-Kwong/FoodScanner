@@ -44,7 +44,7 @@ fun debugPrint(results : List<Detection>) {
 }
 
 
-fun processImage(uri: Uri, context: Context) {
+fun processImage(uri: Uri, context: Context) : List<Detection> {
     val image = convertURItoBitmap(uri, context)
     val tensorImage  = TensorImage.fromBitmap(image)
     val options = ObjectDetector.ObjectDetectorOptions.builder()
@@ -60,4 +60,5 @@ fun processImage(uri: Uri, context: Context) {
     val results = detector.detect(tensorImage)
     Log.d("Detector", "Results: ${results.size}")
     debugPrint(results)
+    return results
 }
