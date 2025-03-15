@@ -1,5 +1,6 @@
 package com.zybooks.foodscanner.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zybooks.foodscanner.data.Recipe
 import com.zybooks.foodscanner.data.RecipeAPI
@@ -37,6 +38,7 @@ class RecipeViewModel : ViewModel() {
 
 
     fun setAPIKey(apiKey : String){
+        Log.i("RecipeViewModel", apiKey)
         this.apiKey = apiKey
     }
 
@@ -62,5 +64,9 @@ class RecipeViewModel : ViewModel() {
             _selectedRecipe.value = recipeDetails
             _loading.value = false
         }
+    }
+
+    fun setNoResultsStatus(status: Boolean) {
+        _noResults.value = status
     }
 }

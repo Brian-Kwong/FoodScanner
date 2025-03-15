@@ -22,13 +22,16 @@ android {
 
         release {
             isDebuggable = true
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
+            isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android.txt"),
+                "proguard-rules.pro")
         }
         debug {
             isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-DEBUG"
         }
@@ -53,6 +56,8 @@ android {
 }
 
 dependencies {
+    implementation (libs.auto.value.annotations)
+    annotationProcessor (libs.auto.value)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
     implementation("org.tensorflow:tensorflow-lite-task-vision:0.4.4")
     implementation(libs.androidx.core.ktx)
