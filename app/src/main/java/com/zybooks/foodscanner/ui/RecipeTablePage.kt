@@ -126,14 +126,26 @@ fun RecipeTopBar(
 @Composable
 fun RecipeTableScreen(providedIngredients: String?, mealType : String  ,modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
 
-    if (providedIngredients != null && viewModel.recipes.isEmpty() && !viewModel.loadingStatus.collectAsState().value) {
+
+
+
+    if (providedIngredients != null  &&  viewModel.recipes.isEmpty() &&!viewModel.loadingStatus.collectAsState().value && !viewModel.noResultsStatus.collectAsState().value) {
         viewModel.fetchRecipeInformation(providedIngredients, mealType)
     } // Fetch recipes based on the provided parameters (ingredients)
 
+
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        if (viewModel.loadingStatus.collectAsState().value || viewModel.recipes.isEmpty()) {
+        if (viewModel.noResultsStatus.collectAsState().value) {
+            RecipeTopBar(title = "Recipes", canNavigateBack = true, onUpClick = onUpClick)
+            Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "No recipes found for the provided ingredients.")
+            }
+        }
+        else if (viewModel.loadingStatus.collectAsState().value || viewModel.recipes.isEmpty()) {
             LoadingScreen(modifier = modifier)
-        } else {
+        }
+        // If no recipes are found, show no results message
+        else {
             RecipeTopBar(title = "Recipes", canNavigateBack = true, onUpClick = onUpClick)
             // Center Text
             LazyColumn(modifier = modifier.fillMaxSize()) {

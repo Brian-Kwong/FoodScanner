@@ -23,7 +23,9 @@ class RecipeViewModel(): ViewModel() {
     private val _selectedRecipe = MutableStateFlow<RecipeDetails?>(null)
     val selectedRecipeDetails : StateFlow<RecipeDetails?> = _selectedRecipe.asStateFlow()
     private val _loading = MutableStateFlow(false)
+    private val _noResults = MutableStateFlow(false)
     val loadingStatus : StateFlow<Boolean> = _loading.asStateFlow()
+    val noResultsStatus : StateFlow<Boolean> = _noResults.asStateFlow()
     private val coroutine =   CoroutineScope(Dispatchers.IO)
 
     private val recipeAPIService: RecipeAPI by lazy {
@@ -61,6 +63,11 @@ class RecipeViewModel(): ViewModel() {
             val results = recipeAPI.getRecipes(apiKey, ingredientString,mealType)
             recipes.clear()
             recipes.addAll(results)
+            if (results.isEmpty()) {
+                _noResults.value = true
+            } else {
+                _noResults.value = false
+            }
             _loading.value = false
         }
     }
