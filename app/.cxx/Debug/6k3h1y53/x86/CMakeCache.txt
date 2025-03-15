@@ -118,7 +118,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 CMAKE_EXPORT_COMPILE_COMMANDS:UNINITIALIZED=ON
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/Project
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/FoodScanner
 
 //No help, variable specified on the command line.
 CMAKE_LIBRARY_OUTPUT_DIRECTORY:UNINITIALIZED=C:\Users\tiger\Documents\GitHub\FoodScanner\app\build\intermediates\cxx\Debug\6k3h1y53\obj\x86
@@ -164,7 +164,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Project
+CMAKE_PROJECT_NAME:STATIC=FoodScanner
 
 //Ranlib
 CMAKE_RANLIB:FILEPATH=C:/Users/tiger/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-ranlib.exe
@@ -240,13 +240,16 @@ CMAKE_TOOLCHAIN_FILE:FILEPATH=C:/Users/tiger/AppData/Local/Android/Sdk/ndk/27.0.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-Project_BINARY_DIR:STATIC=C:/Users/tiger/Documents/GitHub/FoodScanner/app/.cxx/Debug/6k3h1y53/x86
+FoodScanner_BINARY_DIR:STATIC=C:/Users/tiger/Documents/GitHub/FoodScanner/app/.cxx/Debug/6k3h1y53/x86
 
 //Value Computed by CMake
-Project_IS_TOP_LEVEL:STATIC=ON
+FoodScanner_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-Project_SOURCE_DIR:STATIC=C:/Users/tiger/Documents/GitHub/FoodScanner/app
+FoodScanner_SOURCE_DIR:STATIC=C:/Users/tiger/Documents/GitHub/FoodScanner/app
+
+//Dependencies for the target
+api-keys_LIB_DEPENDS:STATIC=general;C:/Users/tiger/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/i686-linux-android/24/liblog.so;
 
 //Path to a library.
 log-lib:FILEPATH=C:/Users/tiger/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/i686-linux-android/24/liblog.so

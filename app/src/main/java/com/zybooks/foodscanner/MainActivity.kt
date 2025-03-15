@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -115,7 +112,7 @@ fun App(modifier: Modifier) {
         composable("detailed-recipe") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, UpClick = {
+                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, upClick = {
                         navController.navigateUp()})
                 }
             }
@@ -126,30 +123,17 @@ fun App(modifier: Modifier) {
                     CameraScreen(cameraScreenViewModel = cameraScreenViewModel, navigateToIngredients = {
                         addViewModel.addedScanIngredients = it.isEmpty()
                         navController.navigate("input/${it}")
+                    }
+                    , onUpClick = {
+                        if (cameraScreenViewModel.photoBitmap != null) {
+                            cameraScreenViewModel.photoBitmap = null
+                        } else {
+                            navController.navigateUp()
+                        }
                     })
                 }
             }
         }
-
-
     }
 }
 
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FoodScannerTheme {
-        Greeting("Android")
-    }
-}

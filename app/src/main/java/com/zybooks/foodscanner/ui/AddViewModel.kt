@@ -3,7 +3,6 @@ package com.zybooks.foodscanner.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.zybooks.foodscanner.data.Ingredients
@@ -32,9 +31,6 @@ class AddViewModel: ViewModel() {
         }
     )
 
-    fun setMealType(mealType: String){
-        autoMealType.value = mealType
-    }
 
     fun updateName(newIngredientName: String){
         inputIngredientName = newIngredientName
