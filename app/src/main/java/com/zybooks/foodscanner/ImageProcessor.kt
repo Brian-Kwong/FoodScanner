@@ -17,7 +17,7 @@ fun convertURItoBitmap(uri: Uri, context: Context): Bitmap {
     val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         val source = ImageDecoder.createSource(context.contentResolver, uri)
         ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
-            decoder.setAllocator(ImageDecoder.ALLOCATOR_SOFTWARE) // Force software rendering
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE // Force software rendering
             decoder.isMutableRequired = true
         }
     } else {
@@ -32,7 +32,7 @@ fun debugPrint(results : List<Detection>) {
     for ((i, obj) in results.withIndex()) {
         val box = obj.boundingBox
 
-        Log.d("Detector", "Detected object: ${i} ")
+        Log.d("Detector", "Detected object: $i ")
         Log.d("Detector", "  boundingBox: (${box.left}, ${box.top}) - (${box.right},${box.bottom})")
 
         for ((j, category) in obj.categories.withIndex()) {

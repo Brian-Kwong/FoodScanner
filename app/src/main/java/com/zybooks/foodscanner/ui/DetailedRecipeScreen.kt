@@ -1,8 +1,6 @@
 package com.zybooks.foodscanner.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,10 +38,9 @@ import com.zybooks.foodscanner.data.RecipeDetails
 import java.util.Locale
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.wear.compose.foundation.SwipeToDismissValue
 
 @Composable
-fun RecipeImage(imageUrl: String, modifier : Modifier) {
+fun RecipeImage(imageUrl: String) {
     AsyncImage(
         model = imageUrl,
         contentDescription = "Recipe Image",
@@ -57,11 +53,13 @@ fun RecipeImage(imageUrl: String, modifier : Modifier) {
 
 
 @Composable
-fun InstructionsEntry(instruction : RecipeDetails.Steps, index : Int, modifier: Modifier = Modifier) {
+fun InstructionsEntry(instruction: RecipeDetails.Steps) {
 
-    val ingredients =  if (instruction.ingredients.isNotEmpty()) instruction.ingredients.map{
-        it.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    }.joinToString(", " ) else "No ingredients"
+    val ingredients =  if (instruction.ingredients.isNotEmpty()) instruction.ingredients.joinToString(
+        ", "
+    ) { ingredients ->
+        ingredients.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    } else "No ingredients"
 
 
     Card (modifier = Modifier
@@ -87,7 +85,7 @@ fun InstructionsEntry(instruction : RecipeDetails.Steps, index : Int, modifier: 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstructionsPage(recipeDetails: RecipeDetails) {
 
@@ -133,7 +131,7 @@ fun InstructionsPage(recipeDetails: RecipeDetails) {
                                 modifier = Modifier
                                     .weight(1f)
                             ) {
-                                InstructionsEntry(step, index + 1)
+                                InstructionsEntry(step)
                             }
                             if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
                                 Box(
@@ -207,22 +205,22 @@ fun DetailsPage(recipeDetails: RecipeDetails){
             DetailEntry("Summary", recipeDetails.summary)
             DetailEntry("Cuisine", if (recipeDetails.cuisines.isNotEmpty() || recipeDetails.cuisines.any {
                     it.isNotEmpty()
-                }) recipeDetails.cuisines.filter{
-                    it.isNotEmpty()
-            }.map{
-                it.replaceFirstChar {
+                }) recipeDetails.cuisines.filter {
+                it.isNotEmpty()
+            }.joinToString { s ->
+                s.replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
                 }
-            }.joinToString() else "N/A")
+            } else "N/A")
             DetailEntry("Dish Types", if (recipeDetails.dishTypes.isNotEmpty() || recipeDetails.dishTypes.any {
                     it.isNotEmpty()
-                }) recipeDetails.dishTypes.filter{
-                    it.isNotEmpty()
-            }.map{
-                it.replaceFirstChar {
+                }) recipeDetails.dishTypes.filter {
+                it.isNotEmpty()
+            }.joinToString { s ->
+                s.replaceFirstChar {
                     if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
                 }
-            }.joinToString() else "N/A")
+            } else "N/A")
             DetailEntry("Health Score", recipeDetails.healthScore.toString())
             DetailEntry("Ready in", recipeDetails.readyInMinutes.toString())
             DetailEntry("Servings", recipeDetails.servings.toString())
@@ -247,7 +245,7 @@ fun IngredientsPage(recipeDetails: RecipeDetails) {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun DetailedRecipeScreen(detailedRecipeViewModel: RecipeViewModel,modifier: Modifier, UpClick: () -> Unit = { }) {
+fun DetailedRecipeScreen(detailedRecipeViewModel: RecipeViewModel,modifier: Modifier, upClick: () -> Unit = { }) {
 
     val selectedRecipe = detailedRecipeViewModel.selectedRecipeDetails.collectAsState().value
     var tabIndex by remember { mutableIntStateOf(0) }
@@ -259,11 +257,10 @@ fun DetailedRecipeScreen(detailedRecipeViewModel: RecipeViewModel,modifier: Modi
         LoadingScreen(modifier = modifier)
     }
     else {
-        Scaffold(
-        ) {
+        Scaffold {
             Column(modifier = modifier.fillMaxWidth()) {
-                RecipeTopBar(title = selectedRecipe.title, canNavigateBack = true, onUpClick = UpClick)
-                RecipeImage(selectedRecipe.image, Modifier)
+                RecipeTopBar(title = selectedRecipe.title, canNavigateBack = true, onUpClick = upClick)
+                RecipeImage(selectedRecipe.image)
                 TabRow(selectedTabIndex = tabIndex) {
                     tabs.forEachIndexed { index, title ->
                         Tab(text = { Text(title) },

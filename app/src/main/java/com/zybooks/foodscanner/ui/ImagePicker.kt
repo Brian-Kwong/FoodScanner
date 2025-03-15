@@ -1,22 +1,22 @@
 package com.zybooks.foodscanner.ui
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.zybooks.foodscanner.data.Ingredients
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.zybooks.foodscanner.processImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.tensorflow.lite.task.vision.detector.Detection
 
 fun processDetection(results : List<Detection>) : String {
@@ -46,28 +46,66 @@ fun processDetection(results : List<Detection>) : String {
 @Composable
 fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
 
-    val imageUUri  by remember  { mutableStateOf("") }
-
-
     val context = LocalContext.current
+    var hasFSAccess = remember { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        ContextCompat.checkSelfPermission(
+            context, Manifest.permission.READ_MEDIA_IMAGES
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    else{
+        ContextCompat.checkSelfPermission(
+            context, Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }}
+
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         // Callback is invoked after the user selects a media item or closes the picker
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             // Returns the URI of the selected media item
-                val results = processImage(uri, context)
-                navigateToIngredients(processDetection(results))
+            val results = processImage(uri, context)
+            navigateToIngredients(processDetection(results))
         } else {
             // Returns null if the user didn't select any media
             Log.d("PhotoPicker", "No media selected")
         }
     }
 
-    val fileType = "image/*"
+    // Request camera permission if not granted
+    val requestUserForFSAccess = rememberLauncherForActivityResult (
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            hasFSAccess = true
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } else {
+            // Check if they have permanently denied the permission
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                    context as Activity,
+                    Manifest.permission.CAMERA
+                )
+            ) {
+                // Show toast this feature won't work without the permission
+                Toast.makeText(
+                    context,
+                    "FS permission is required to select media.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+
 
     // Button for selecting an image
     Button(onClick = {
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.SingleMimeType(fileType)))
+        if (!hasFSAccess &&Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            requestUserForFSAccess.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            return@Button
+        } else {
+            // Android 13 doesn't require permission for media access of images
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
     }) {
         Text("Select Image")
     }

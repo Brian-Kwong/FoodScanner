@@ -1,0 +1,3 @@
+C:/Users/tiger/Documents/GitHub/FoodScanner/app/.cxx/Debug/6k3h1y53/x86_64/CMakeFiles/api-keys.dir
+C:/Users/tiger/Documents/GitHub/FoodScanner/app/.cxx/Debug/6k3h1y53/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/tiger/Documents/GitHub/FoodScanner/app/.cxx/Debug/6k3h1y53/x86_64/CMakeFiles/rebuild_cache.dir

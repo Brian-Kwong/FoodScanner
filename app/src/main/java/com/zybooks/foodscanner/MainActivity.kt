@@ -1,5 +1,6 @@
 package com.zybooks.foodscanner
 
+import android.util.Base64
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,14 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -33,6 +30,15 @@ import com.zybooks.foodscanner.ui.RecipeTableScreen
 import com.zybooks.foodscanner.ui.RecipeViewModel
 import com.zybooks.foodscanner.ui.theme.FoodScannerTheme
 
+object APIKeyLibrary {
+    // Reads in the API Key from a compiled C++ library
+    init {
+        System.loadLibrary("api-keys")
+    }
+
+    external fun getAPIKey(): String
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +53,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun App(modifier: Modifier) {
+
     val navController = rememberNavController()
 
     val cameraScreenViewModel = CameraScreenViewModel()
@@ -58,7 +65,9 @@ fun App(modifier: Modifier) {
     val recipeViewModel : RecipeViewModel = viewModel(
         viewModelStoreOwner = LocalViewModelStoreOwner.current!!,
     )
-    recipeViewModel.setAPIKey(stringResource(R.string.api_key))
+
+
+    recipeViewModel.setAPIKey(  Base64.decode(APIKeyLibrary.getAPIKey(), Base64.DEFAULT).toString(Charsets.UTF_8))
 
 
 
@@ -72,7 +81,7 @@ fun App(modifier: Modifier) {
                 }
             }
         }
-        composable("input/{scannedIngredients}", arguments = listOf(navArgument("scannedIngredients") { defaultValue = "" }, )) { backStackEntry ->
+        composable("input/{scannedIngredients}", arguments = listOf(navArgument("scannedIngredients") { defaultValue = "" } )) { backStackEntry ->
             val scannedIngredients = remember { backStackEntry.arguments?.getString("scannedIngredients") ?: "" }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
@@ -103,7 +112,7 @@ fun App(modifier: Modifier) {
         composable("detailed-recipe") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, UpClick = {
+                    DetailedRecipeScreen(detailedRecipeViewModel = recipeViewModel, Modifier, upClick = {
                         navController.navigateUp()})
                 }
             }
@@ -114,30 +123,17 @@ fun App(modifier: Modifier) {
                     CameraScreen(cameraScreenViewModel = cameraScreenViewModel, navigateToIngredients = {
                         addViewModel.addedScanIngredients = it.isEmpty()
                         navController.navigate("input/${it}")
+                    }
+                    , onUpClick = {
+                        if (cameraScreenViewModel.photoBitmap != null) {
+                            cameraScreenViewModel.photoBitmap = null
+                        } else {
+                            navController.navigateUp()
+                        }
                     })
                 }
             }
         }
-
-
     }
 }
 
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FoodScannerTheme {
-        Greeting("Android")
-    }
-}

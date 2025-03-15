@@ -1,8 +1,6 @@
 package com.zybooks.foodscanner.ui
 
 import android.util.Log
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -164,7 +162,7 @@ fun IngredientListScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
     @Composable
@@ -172,9 +170,11 @@ fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
 
 
         Log.i("test", ingredientList.toString())
-        LazyColumn ( modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f), horizontalAlignment = Alignment.CenterHorizontally,){ item {
+        LazyColumn(
+            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ){ item {
             ingredientList.forEach {
-
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = { value ->
                         when (value) {
