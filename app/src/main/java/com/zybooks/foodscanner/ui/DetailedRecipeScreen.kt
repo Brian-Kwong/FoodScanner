@@ -3,10 +3,13 @@ package com.zybooks.foodscanner.ui
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -68,7 +72,7 @@ fun InstructionsEntry(instruction : RecipeDetails.Steps, index : Int, modifier: 
             .padding(5.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.weight(1f) )
             {
-                Text(text = index.toString(), fontWeight = FontWeight.Bold)
+                Text(text = instruction.number.toString(), fontWeight = FontWeight.Bold)
             }
             Box(modifier = Modifier.weight(5f))
             {
@@ -123,7 +127,29 @@ fun InstructionsPage(recipeDetails: RecipeDetails) {
                 SwipeToDismissBox(
                     state = dismissState,
                     content = {
-                        InstructionsEntry(step, index + 1)
+                        Row(modifier = Modifier.height(IntrinsicSize.Min)) {
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                            ) {
+                                InstructionsEntry(step, index + 1)
+                            }
+                            if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                                Box(
+                                    modifier = Modifier.weight(0.5f).fillMaxHeight().background(
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                                    ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = androidx.compose.material.icons.Icons.Default.Delete,
+                                        contentDescription = "Delete Ingredient",
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
+                            }
+                        }
                     },
                     backgroundContent = {},
                     modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),

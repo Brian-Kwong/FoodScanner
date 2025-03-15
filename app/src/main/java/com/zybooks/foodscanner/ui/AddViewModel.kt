@@ -39,6 +39,10 @@ class AddViewModel: ViewModel() {
         _ingredientsList.add(ingredients)
     }
 
+    fun removeIngredient(ingredients: Ingredients){
+        _ingredientsList.remove(ingredients)
+    }
+
     fun clearIngredients(){
         _ingredientsList.clear()
     }

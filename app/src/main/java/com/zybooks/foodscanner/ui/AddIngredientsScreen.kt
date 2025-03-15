@@ -1,32 +1,36 @@
 package com.zybooks.foodscanner.ui
 
 import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.zybooks.foodscanner.data.Ingredients
 
 
@@ -136,25 +140,68 @@ fun IngredientListScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
     @Composable
     fun mapIngredients(ingredientList: List<Ingredients>){
+
+
         Log.i("test", ingredientList.toString())
-        Column ( modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f), horizontalAlignment = Alignment.CenterHorizontally,) {
+        LazyColumn ( modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f), horizontalAlignment = Alignment.CenterHorizontally,){ item {
             ingredientList.forEach {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp)
-                ) {
-                    Box(modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Text(text = it.name, fontWeight = FontWeight.W200)
+
+                val dismissState = rememberSwipeToDismissBoxState(
+                    confirmValueChange = { value ->
+                        when (value) {
+                            SwipeToDismissBoxValue.EndToStart -> {
+                                viewModel.removeIngredient(it)
+                                true
+                            }
+
+                            else -> false
+                        }
                     }
-                    Spacer(Modifier.size(20.dp))
-                    Box(modifier.weight(1f) , contentAlignment = Alignment.Center) {
-                        Text(text = it.amount, fontWeight = FontWeight.W200)
-                    }
-                }
+                )
+
+
+                SwipeToDismissBox(
+                    state = dismissState,
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp)
+                        ) {
+                            Box(modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(text = it.name, fontWeight = FontWeight.W200)
+                            }
+                            Spacer(Modifier.size(20.dp))
+                            Box(modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Text(text = it.amount, fontWeight = FontWeight.W200)
+                            }
+                            if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
+                                Box(
+                                    modifier = Modifier.weight(0.5f).background(
+                                        androidx.compose.material3.MaterialTheme.colorScheme.error.copy(alpha = 0.7f)
+                                    ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = androidx.compose.material.icons.Icons.Default.Delete,
+                                        contentDescription = "Delete Ingredient",
+                                        modifier = Modifier.size(30.dp)
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    backgroundContent = {},
+                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
+                    enableDismissFromStartToEnd = false,
+                    enableDismissFromEndToStart = true
+                )
+
+            }
             }
         }
 
