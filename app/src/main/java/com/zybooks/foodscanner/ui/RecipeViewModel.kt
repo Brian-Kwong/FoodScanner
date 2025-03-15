@@ -55,10 +55,10 @@ class RecipeViewModel(): ViewModel() {
         recipes.clear()
     }
 
-    fun fetchRecipeInformation(ingredientString : String){
+    fun fetchRecipeInformation(ingredientString : String, mealType : String){
         coroutine.launch {
             _loading.value = true
-            val results = recipeAPI.getRecipes(apiKey, ingredientString)
+            val results = recipeAPI.getRecipes(apiKey, ingredientString,mealType)
             recipes.clear()
             recipes.addAll(results)
             _loading.value = false

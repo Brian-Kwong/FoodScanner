@@ -72,23 +72,28 @@ fun App(modifier: Modifier) {
                 }
             }
         }
-        composable("input/{scannedIngredients}", arguments = listOf(navArgument("scannedIngredients") { defaultValue = "" })) { backStackEntry ->
+        composable("input/{scannedIngredients}", arguments = listOf(navArgument("scannedIngredients") { defaultValue = "" }, )) { backStackEntry ->
             val scannedIngredients = remember { backStackEntry.arguments?.getString("scannedIngredients") ?: "" }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    IngredientListScreen(scannedIngredients, Modifier,addViewModel, onRecipeListNavigate = {
+                    IngredientListScreen(scannedIngredients, Modifier,addViewModel, onRecipeListNavigate = { ingredients, mealType ->
                         recipeViewModel.clearRecipes()
-                        navController.navigate("recipe-list/${it}")
+                        navController.navigate("recipe-list/${ingredients}/${mealType.replace(" ", "_")}")
                     }, onUpClick = {
-                        navController.navigateUp()})
+                        if (addViewModel.showSelectMealType) {
+                            addViewModel.showSelectMealType = false
+                        } else {
+                            navController.navigateUp()
+                        }})
                 }
             }
         }
-        composable("recipe-list/{ingredients}", arguments = listOf(navArgument("ingredients") { defaultValue = "" })) { backStackEntry ->
+        composable("recipe-list/{ingredients}/{mealType}", arguments = listOf(navArgument("ingredients") { defaultValue = "" },navArgument("mealType") { defaultValue = "" })) { backStackEntry ->
             val ingredients = remember { backStackEntry.arguments?.getString("ingredients") ?: "" }
+            val mealType = remember { backStackEntry.arguments?.getString("mealType") ?: addViewModel.autoMealType.value }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    RecipeTableScreen(ingredients, Modifier, recipeViewModel , onRecipeClick = {
+                    RecipeTableScreen(ingredients, mealType.replace("_", " "), Modifier, recipeViewModel , onRecipeClick = {
                         navController.navigate("detailed-recipe")
                     }, onUpClick = {
                         navController.navigateUp()})

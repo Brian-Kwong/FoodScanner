@@ -55,7 +55,7 @@ fun IngredientListScreen(
     scannedIngredients: String,
     modifier: Modifier = Modifier,
     viewModel : AddViewModel,
-    onRecipeListNavigate: (String) -> Unit = { },
+    onRecipeListNavigate: (String, String) -> Unit,
     onUpClick: () -> Unit = {  }
 ){
 
@@ -66,12 +66,12 @@ fun IngredientListScreen(
         viewModel.setShowInput()
     }
 
-    fun handleRouteToRecipe(ingredients: List<Ingredients>){
+    fun handleRouteToRecipe(ingredients: List<Ingredients>, mealType : String = viewModel.autoMealType.value) {
 
         var ingredientString = ""
         ingredients.forEach { ingredient -> ingredientString += "${ingredient.name}," }
         if (viewModel.ingredientsList.isNotEmpty()){
-            onRecipeListNavigate(ingredientString)
+            onRecipeListNavigate(ingredientString, mealType)
         }
     }
 
@@ -95,7 +95,7 @@ fun IngredientListScreen(
         Column(modifier = modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally,  verticalArrangement = Arrangement.Center) {
             IngredientTable(modifier, viewModel)
             Spacer(Modifier.size(100.dp))
-            if (!viewModel.showInput) {
+            if (!(viewModel.showInput || viewModel.showSelectMealType)) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Button(onClick = { viewModel.setShowInput() }) {
                         Text("Add More")
@@ -103,11 +103,35 @@ fun IngredientListScreen(
                     Button(onClick = { viewModel.clearIngredients() }) {
                         Text("CLear All")
                     }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList) }) {
+                    Button(onClick = { viewModel.showSelectMealType = true }) {
                         Text("Submit")
                     }
                 }
-            } else {
+            }
+            else if(viewModel.showSelectMealType) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Select a Meal Type")
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, viewModel.autoMealType.value) }) {
+                        Text("Auto Meal Type: ${viewModel.autoMealType.value}")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "breakfast") }) {
+                        Text("Breakfast")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "lunch") }) {
+                        Text("Lunch")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "lunch") }) {
+                        Text("Snack")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "dinner") }) {
+                        Text("Dinner")
+                    }
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "mid night snack") }) {
+                        Text("Mid Night Snack")
+                    }
+                }
+            }
+            else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(10.dp)

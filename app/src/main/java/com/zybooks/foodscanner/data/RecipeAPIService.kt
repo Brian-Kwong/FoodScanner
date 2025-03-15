@@ -12,10 +12,22 @@ import retrofit2.http.Query
 
 interface RecipeAPI{
 
-    @GET("findByIngredients?")
+    @GET("complexSearch?")
     suspend fun getRecipes(
         @Header("x-rapidapi-key") apiKey: String,
-        @Query("ingredients") ingredients: String): RecipeList
+        @Query("query") foodType: String,
+        @Query("includeIngredients") ingredient: String,
+        @Query("sort") sort: String = "max-used-ingredients",
+        @Query("instructionsRequired") instructionsRequired: Boolean = true,
+        @Query("fillIngredients") fillIngredients: Boolean = false,
+        @Query("addRecipeInformation") addRecipeInformation: Boolean = false,
+        @Query("addRecipeInstructions") addRecipeInstructions: Boolean = false,
+        @Query("addRecipeNutrition") addRecipeNutrition: Boolean = false,
+        @Query("maxReadyTime") maxReadyTime: Int = 45,
+        @Query("ignorePantry") ignorePantry: Boolean = true,
+        @Query("offset") offset: Int = 0,
+        @Query("number") number: Int = 10
+    ): RecipeResponse
 
     @GET("informationBulk?")
     suspend fun getRecipeInformationBulk(
@@ -31,11 +43,13 @@ interface RecipeAPI{
 
 class RecipeAPIService (private val service: RecipeAPI) {
 
-    suspend fun getRecipes(apiKey: String, ingredient: String): RecipeList {
+    suspend fun getRecipes(apiKey: String, ingredient: String, mealType : String): RecipeList {
         Log.i("RecipeAPIService", "getRecipes")
         Log.i("RecipeAPIService", "apiKey: $apiKey")
         Log.i("RecipeAPIService", "ingredient: $ingredient")
-        val recipeList  = service.getRecipes(apiKey, ingredient)
+
+        val recipeList  = service.getRecipes(apiKey, mealType, ingredient.dropLast(1)).results
+        Log.i("RecipeAPIService", "recipeList: $recipeList")
         return recipeList
     }
 

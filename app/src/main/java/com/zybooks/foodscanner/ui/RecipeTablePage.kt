@@ -65,7 +65,7 @@ fun CreateRecipeCard(
             Spacer(modifier = Modifier.size(10.dp))
             Column {
                 Text(text = recipe.title, fontWeight = FontWeight.Bold)
-                Text(text = "Available ingredients ${recipe.usedIngredients.size} Missing ingredients ${recipe.missedIngredients.size}")
+                Text(text = "Available ingredients ${recipe.usedIngredientCount} Missing ingredients ${recipe.missedIngredientCount}")
             }
         }
     }
@@ -124,10 +124,10 @@ fun RecipeTopBar(
 
 
 @Composable
-fun RecipeTableScreen(param: String? ,modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
+fun RecipeTableScreen(providedIngredients: String?, mealType : String  ,modifier: Modifier, viewModel: RecipeViewModel, onUpClick: () -> Unit, onRecipeClick: () -> Unit = {}) {
 
-    if (param != null && viewModel.recipes.isEmpty() && !viewModel.loadingStatus.collectAsState().value) {
-        viewModel.fetchRecipeInformation(param)
+    if (providedIngredients != null && viewModel.recipes.isEmpty() && !viewModel.loadingStatus.collectAsState().value) {
+        viewModel.fetchRecipeInformation(providedIngredients, mealType)
     } // Fetch recipes based on the provided parameters (ingredients)
 
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {

@@ -18,6 +18,23 @@ class AddViewModel: ViewModel() {
     var units by mutableStateOf("")
     var showInput by mutableStateOf(false)
     var addedScanIngredients by mutableStateOf(false)
+    var showSelectMealType by  mutableStateOf(false)
+
+    // Depending time of day auto set mealType to breakfast, lunch, or dinner
+    val autoMealType = mutableStateOf(
+        when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
+            in 2..5 -> "Mid Night Snack"
+            in 6..10 -> "Breakfast"
+            in 11..14 -> "Lunch"
+            in 15..17 -> "Snack"
+            in 18..22 -> "Dinner"
+            else -> "Late Night Snack"
+        }
+    )
+
+    fun setMealType(mealType: String){
+        autoMealType.value = mealType
+    }
 
     fun updateName(newIngredientName: String){
         inputIngredientName = newIngredientName
