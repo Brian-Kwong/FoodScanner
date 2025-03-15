@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -182,12 +183,20 @@ fun DetailsPage(recipeDetails: RecipeDetails){
                     it.isNotEmpty()
                 }) recipeDetails.cuisines.filter{
                     it.isNotEmpty()
-            }.joinToString { ", " } else "N/A")
+            }.map{
+                it.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+                }
+            }.joinToString() else "N/A")
             DetailEntry("Dish Types", if (recipeDetails.dishTypes.isNotEmpty() || recipeDetails.dishTypes.any {
                     it.isNotEmpty()
                 }) recipeDetails.dishTypes.filter{
                     it.isNotEmpty()
-            }.joinToString { ", " } else "N/A")
+            }.map{
+                it.replaceFirstChar {
+                    if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+                }
+            }.joinToString() else "N/A")
             DetailEntry("Health Score", recipeDetails.healthScore.toString())
             DetailEntry("Ready in", recipeDetails.readyInMinutes.toString())
             DetailEntry("Servings", recipeDetails.servings.toString())
@@ -197,10 +206,15 @@ fun DetailsPage(recipeDetails: RecipeDetails){
 
 @Composable
 fun IngredientsPage(recipeDetails: RecipeDetails) {
-    Column {
-        // Index followed by the name of the ingredient
-        recipeDetails.extendedIngredients.forEach { ingredient ->
-            IngredientEntry(ingredient, recipeDetails.extendedIngredients.indexOf(ingredient) + 1)
+    LazyColumn {
+        item {
+            // Index followed by the name of the ingredient
+            recipeDetails.extendedIngredients.forEach { ingredient ->
+                IngredientEntry(
+                    ingredient,
+                    recipeDetails.extendedIngredients.indexOf(ingredient) + 1
+                )
+            }
         }
     }
 }

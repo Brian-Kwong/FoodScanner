@@ -31,7 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CameraScreen(cameraScreenViewModel: CameraScreenViewModel){
+fun CameraScreen(cameraScreenViewModel: CameraScreenViewModel, navigateToIngredients: (String) -> Unit = { }) {
 
     val context = LocalContext.current
 
@@ -58,7 +58,10 @@ fun CameraScreen(cameraScreenViewModel: CameraScreenViewModel){
             }
             else{
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
-                    Button( onClick = { cameraScreenViewModel.handleSaveToFileSystem(context = context) }, shape = CircleShape, modifier = Modifier.size(100.dp)){
+                    Button( onClick = {
+                                        val detectedResults = cameraScreenViewModel.handleSaveToFileSystem(context = context)
+                                         navigateToIngredients(processDetection(detectedResults))
+                                      }, shape = CircleShape, modifier = Modifier.size(100.dp)){
                         Icon(imageVector = Icons.Default.Check, contentDescription = "", modifier = Modifier.size(150.dp))
                     }
                     Button( onClick = { cameraLauncher.launch(null) }, shape = CircleShape, modifier = Modifier.size(100.dp)){

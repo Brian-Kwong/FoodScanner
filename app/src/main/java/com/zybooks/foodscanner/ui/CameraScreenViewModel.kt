@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.zybooks.foodscanner.processImage
+import org.tensorflow.lite.task.vision.detector.Detection
 import java.io.File
 import java.util.Date
 
@@ -20,9 +21,9 @@ class CameraScreenViewModel: ViewModel() {
 
     var photoBitmap: Bitmap? by mutableStateOf(null)
 
-    fun handleSaveToFileSystem(context: Context){
+    fun handleSaveToFileSystem(context: Context) : List<Detection>{
         val fileName = "ingredients-${Date().time}.jpg"
         context.openFileOutput(fileName, Context.MODE_PRIVATE).use { stream -> photoBitmap?.compress(Bitmap.CompressFormat.JPEG, 95, stream) }
-        processImage(Uri.fromFile(File(context.filesDir.toString(), fileName)), context)
+        return processImage(Uri.fromFile(File(context.filesDir.toString(), fileName)), context)
     }
 }

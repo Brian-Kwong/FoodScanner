@@ -39,4 +39,7 @@ class AddViewModel: ViewModel() {
         _ingredientsList.add(ingredients)
     }
 
+    fun clearIngredients(){
+        _ingredientsList.clear()
+    }
 }

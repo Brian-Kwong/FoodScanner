@@ -106,7 +106,10 @@ fun App(modifier: Modifier) {
         composable("take-picture-camera") {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    CameraScreen(cameraScreenViewModel = cameraScreenViewModel)
+                    CameraScreen(cameraScreenViewModel = cameraScreenViewModel, navigateToIngredients = {
+                        addViewModel.addedScanIngredients = it.isEmpty()
+                        navController.navigate("input/${it}")
+                    })
                 }
             }
         }

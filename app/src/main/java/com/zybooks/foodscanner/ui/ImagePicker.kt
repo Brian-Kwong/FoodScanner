@@ -17,6 +17,31 @@ import com.zybooks.foodscanner.processImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.tensorflow.lite.task.vision.detector.Detection
+
+fun processDetection(results : List<Detection>) : String {
+    val filteredResults = results.filter {
+        // Filter out results with low confidence
+        (it.categories.firstOrNull()?.score ?: 0.0f) > 0.15f
+    }.map {
+        // Get the category for each result
+        val label = it.categories.firstOrNull()?.label ?: "Unknown"
+        label.split("-")[0] // Split to get the main
+    }.filter {
+        // Filter unwanted labels
+        it != "Unknown"
+    }
+
+    // Convert the list of labels to a map with counts
+    // Sort by count descending and take the top 3
+    // Take the first 3 labels to avoid too many results
+    val resultCount = filteredResults.groupingBy { it }.eachCount().entries.sortedBy {
+        it.value
+    }.reversed().take(3).associate {
+        it.key to it.value
+    }.toString().replace("{", "").replace("}", "")
+    return resultCount
+}
 
 @Composable
 fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
@@ -31,26 +56,7 @@ fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             // Returns the URI of the selected media item
                 val results = processImage(uri, context)
-                val filteredResults = results.map {
-                    // Get the category for each result
-                    val label = it.categories.firstOrNull()?.label ?: "Unknown"
-                    label.split("-")[0] // Split to get the main
-                }.filter {
-                    // Filter unwanted labels
-                    it != "Unknown"
-                }
-
-                // Convert the list of labels to a map with counts
-                // Sort by count descending and take the top 3
-                // Take the first 3 labels to avoid too many results
-                val resultCount = filteredResults.groupingBy { it }.eachCount().entries.sortedBy {
-                    it.value
-                }.reversed().take(3).associate {
-                    it.key to it.value
-                }.toString().replace("{", "").replace("}", "")
-            navigateToIngredients(resultCount)
-
-
+                navigateToIngredients(processDetection(results))
         } else {
             // Returns null if the user didn't select any media
             Log.d("PhotoPicker", "No media selected")
