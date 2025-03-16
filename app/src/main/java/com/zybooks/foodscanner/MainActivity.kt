@@ -30,14 +30,18 @@ import com.zybooks.foodscanner.ui.RecipeTableScreen
 import com.zybooks.foodscanner.ui.RecipeViewModel
 import com.zybooks.foodscanner.ui.theme.FoodScannerTheme
 
-object APIKeyLibrary {
-    // Reads in the API Key from a compiled C++ library
-    init {
-        System.loadLibrary("api-keys")
+class APIKeyLibrary {
+    companion object {
+        // Reads in the API Key from a compiled C++ library
+        init {
+            System.loadLibrary("api-keys") // Load the native library
+        }
     }
 
+    // Native method declaration
     external fun getAPIKey(): String
 }
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +71,7 @@ fun App(modifier: Modifier) {
     )
 
 
-    recipeViewModel.setAPIKey(  Base64.decode(APIKeyLibrary.getAPIKey(), Base64.DEFAULT).toString(Charsets.UTF_8))
+    recipeViewModel.setAPIKey(  Base64.decode(APIKeyLibrary().getAPIKey(), Base64.DEFAULT).toString(Charsets.UTF_8))
 
 
 
@@ -105,6 +109,7 @@ fun App(modifier: Modifier) {
                     RecipeTableScreen(ingredients, mealType.replace("_", " "), Modifier, recipeViewModel , onRecipeClick = {
                         navController.navigate("detailed-recipe")
                     }, onUpClick = {
+                        recipeViewModel.setNoResultsStatus(false)
                         navController.navigateUp()})
                 }
             }

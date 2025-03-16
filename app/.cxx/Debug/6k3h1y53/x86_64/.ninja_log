@@ -1,5 +1,3 @@
 # ninja log v5
-6	832	7637344842426324	CMakeFiles/api-keys.dir/src/main/cpp/api-key.cpp.o	3257f221b2857662
-833	933	7637344843431555	../../../../build/intermediates/cxx/Debug/6k3h1y53/obj/x86_64/libapi-keys.so	150fabcfd349b6c3
-8	1334	7637352723355188	CMakeFiles/api-keys.dir/src/main/cpp/api-key.cpp.o	3257f221b2857662
-1335	1476	7637352724810931	../../../../build/intermediates/cxx/Debug/6k3h1y53/obj/x86_64/libapi-keys.so	150fabcfd349b6c3
+1	932	7637774231788883	CMakeFiles/api-keys.dir/src/main/cpp/api-key.cpp.o	3257f221b2857662
+938	1031	7637774232779299	../../../../build/intermediates/cxx/Debug/6k3h1y53/obj/x86_64/libapi-keys.so	150fabcfd349b6c3
