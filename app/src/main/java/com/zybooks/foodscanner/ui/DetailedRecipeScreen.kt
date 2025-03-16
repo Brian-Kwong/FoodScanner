@@ -38,6 +38,7 @@ import com.zybooks.foodscanner.data.RecipeDetails
 import java.util.Locale
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.core.text.HtmlCompat
 
 @Composable
 fun RecipeImage(imageUrl: String) {
@@ -181,7 +182,7 @@ fun IngredientEntry(ingredient: RecipeDetails.IngredientsDetails, index : Int) {
 }
 
 @Composable
-fun DetailEntry(title: String, value: String) {
+fun DetailEntry(title: String, value: String, html: Boolean = false) {
     Row (modifier = Modifier.fillMaxWidth()) {
         Box(modifier = Modifier.weight(1f))
         {
@@ -189,7 +190,17 @@ fun DetailEntry(title: String, value: String) {
         }
         Box(modifier = Modifier.weight(1f))
         {
-            Text(text = value, maxLines = 5, overflow = TextOverflow.Ellipsis)
+            // If html is true, parse the string as HTML
+            if (html) {
+                Text(
+                    text = HtmlCompat.fromHtml(value, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            else {
+                Text(text = value, maxLines = 5, overflow = TextOverflow.Ellipsis)
+            }
         }
     }
 }
@@ -202,7 +213,7 @@ fun DetailsPage(recipeDetails: RecipeDetails){
     LazyColumn {
         item {
             DetailEntry("Title", recipeDetails.title)
-            DetailEntry("Summary", recipeDetails.summary)
+            DetailEntry("Summary", recipeDetails.summary,  true)
             DetailEntry("Cuisine", if (recipeDetails.cuisines.isNotEmpty() || recipeDetails.cuisines.any {
                     it.isNotEmpty()
                 }) recipeDetails.cuisines.filter {
