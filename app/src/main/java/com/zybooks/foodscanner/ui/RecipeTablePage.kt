@@ -1,6 +1,5 @@
 package com.zybooks.foodscanner.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,7 +50,6 @@ fun CreateRecipeCard(
             .fillMaxSize(),
         onClick = {
             viewModel.fetchSelectedRecipe(recipe.id.toString())
-            Log.d("RecipeTablePage", "Recipe clicked")
             onClickAction()
         }
     ) {

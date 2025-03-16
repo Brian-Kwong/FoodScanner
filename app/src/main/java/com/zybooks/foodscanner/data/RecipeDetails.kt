@@ -79,4 +79,3 @@ data class RecipeDetails(
     )
 }
 
-typealias RecipeDetailsList = List<RecipeDetails>

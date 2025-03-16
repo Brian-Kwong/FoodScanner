@@ -1,6 +1,5 @@
 package com.zybooks.foodscanner.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -169,7 +168,6 @@ fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
     fun mapIngredients(ingredientList: List<Ingredients>){
 
 
-        Log.i("test", ingredientList.toString())
         LazyColumn(
             modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f),
             horizontalAlignment = Alignment.CenterHorizontally,

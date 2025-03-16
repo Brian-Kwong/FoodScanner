@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -61,13 +60,11 @@ fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         // Callback is invoked after the user selects a media item or closes the picker
         if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
             // Returns the URI of the selected media item
             val results = processImage(uri, context)
             navigateToIngredients(processDetection(results))
         } else {
             // Returns null if the user didn't select any media
-            Log.d("PhotoPicker", "No media selected")
         }
     }
 
