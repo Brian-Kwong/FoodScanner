@@ -30,7 +30,7 @@ Visit our [App Website](https://staging.d2fhzzegitvejc.amplifyapp.com/)
   - The [APK](https://staging.d2fhzzegitvejc.amplifyapp.com/static/media/app-release.c03141fd43f96a8ce273.apk) has the API lib embedded, but if you prefer to build it yourself
     1. Make sure you have CMake and NDK installed in Andriod Studio `Tools > SDK Manager > SDK Tools`
     2. Obtain the cpp file from Slack
-    3. Make a `cpp` folder in `app/src/main`
+    3. Make a `cpp` folder in `app/src/main` and paste the provided `.cpp` file here
     4. Rebuild the application
         - Should look like this
   ```
@@ -38,7 +38,7 @@ Visit our [App Website](https://staging.d2fhzzegitvejc.amplifyapp.com/)
 ├── assets
 │   └── model.tflite
 ├── cpp
-│   └── api-key.cpp <-----
+│   └── api-key.cpp <----- File goes here
 ├── ic_launcher-playstore.png
 ├── java
 │   └── com
