@@ -30,6 +30,79 @@ Visit our [App Website](https://staging.d2fhzzegitvejc.amplifyapp.com/)
   - The [APK](https://staging.d2fhzzegitvejc.amplifyapp.com/static/media/app-release.c03141fd43f96a8ce273.apk) has the API lib embedded, but if you prefer to build it yourself
     1. Make sure you have CMake and NDK installed in Andriod Studio `Tools > SDK Manager > SDK Tools`
     2. Obtain the cpp file from Slack
-    3. Rebuild the application 
+    3. Make a `cpp` folder in `app/src/main`
+    4. Rebuild the application
+        - Should look like this
+  ```
+├── AndroidManifest.xml
+├── assets
+│   └── model.tflite
+├── cpp
+│   └── api-key.cpp <-----
+├── ic_launcher-playstore.png
+├── java
+│   └── com
+│       └── zybooks
+│           └── foodscanner
+│               ├── ImageProcessor.kt
+│               ├── MainActivity.kt
+│               ├── data
+│               │   ├── Ingredients.kt
+│               │   ├── Recipe.kt
+│               │   ├── RecipeAPIService.kt
+│               │   └── RecipeDetails.kt
+│               └── ui
+│                   ├── AddIngredientsScreen.kt
+│                   ├── AddViewModel.kt
+│                   ├── CameraScreen.kt
+│                   ├── CameraScreenViewModel.kt
+│                   ├── DetailedRecipeScreen.kt
+│                   ├── ImagePicker.kt
+│                   ├── RecipeTablePage.kt
+│                   ├── RecipeViewModel.kt
+│                   └── theme
+│                       ├── Color.kt
+│                       ├── Theme.kt
+│                       └── Type.kt
+└── res
+    ├── drawable
+    │   ├── ic_launcher_background.xml
+    │   └── ic_launcher_foreground.xml
+    ├── mipmap-anydpi-v26
+    │   ├── ic_launcher.xml
+    │   └── ic_launcher_round.xml
+    ├── mipmap-hdpi
+    │   ├── ic_launcher.webp
+    │   ├── ic_launcher_foreground.webp
+    │   └── ic_launcher_round.webp
+    ├── mipmap-mdpi
+    │   ├── ic_launcher.webp
+    │   ├── ic_launcher_foreground.webp
+    │   └── ic_launcher_round.webp
+    ├── mipmap-xhdpi
+    │   ├── ic_launcher.webp
+    │   ├── ic_launcher_foreground.webp
+    │   └── ic_launcher_round.webp
+    ├── mipmap-xxhdpi
+    │   ├── ic_launcher.webp
+    │   ├── ic_launcher_foreground.webp
+    │   └── ic_launcher_round.webp
+    ├── mipmap-xxxhdpi
+    │   ├── ic_launcher.webp
+    │   ├── ic_launcher_foreground.webp
+    │   └── ic_launcher_round.webp
+    ├── values
+    │   ├── colors.xml
+    │   ├── ic_launcher_background.xml
+    │   ├── secrets.xml
+    │   ├── strings.xml
+    │   └── themes.xml
+    └── xml
+        ├── backup_rules.xml
+        └── data_extraction_rules.xml
+         
+```
+
+  
 3. Make sure you using Android 7.1 Nougat 🍫 or higher with at least API Level 25.
 
