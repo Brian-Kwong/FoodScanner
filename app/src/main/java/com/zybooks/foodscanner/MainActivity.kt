@@ -90,7 +90,9 @@ fun App(modifier: Modifier) {
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                     IngredientListScreen(scannedIngredients, Modifier,addViewModel, onRecipeListNavigate = { ingredients, mealType ->
-                        recipeViewModel.clearRecipes()
+                        recipeViewModel.recipes.clear()
+                        recipeViewModel.setLoadStatus(false)
+                        recipeViewModel.setNoResultsStatus(false)
                         navController.navigate("recipe-list/${ingredients}/${mealType.replace(" ", "_")}")
                     }, onUpClick = {
                         if (addViewModel.showSelectMealType) {
@@ -106,10 +108,9 @@ fun App(modifier: Modifier) {
             val mealType = remember { backStackEntry.arguments?.getString("mealType") ?: addViewModel.autoMealType.value }
             Scaffold(modifier = Modifier.fillMaxWidth()) { innerPadding ->
                 Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                    RecipeTableScreen(ingredients, mealType.replace("_", " "), Modifier, recipeViewModel , onRecipeClick = {
+                    RecipeTableScreen(ingredients, mealType, Modifier, recipeViewModel , onRecipeClick = {
                         navController.navigate("detailed-recipe")
                     }, onUpClick = {
-                        recipeViewModel.setNoResultsStatus(false)
                         navController.navigateUp()})
                 }
             }

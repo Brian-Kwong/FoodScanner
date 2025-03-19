@@ -104,6 +104,6 @@ fun ImagePicker( navigateToIngredients: (String) -> Unit = { }) {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
     }) {
-        Text("Select Image")
+        Text("Through a Image")
     }
 }

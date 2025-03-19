@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -56,8 +59,15 @@ fun IngredientListScreen(
     onUpClick: () -> Unit = {  }
 ){
 
+    val showError = remember { mutableStateOf(false) }
+
 
     fun handleSaveIngredients(){
+        if (viewModel.inputIngredientName == "" ){
+            showError.value = true
+            return
+        }
+        showError.value = false
         val newIngredient = Ingredients(viewModel.inputIngredientName, viewModel.quantityInput + " " + viewModel.units)
         viewModel.addIngredient(newIngredient)
         viewModel.setShowInput()
@@ -98,7 +108,7 @@ fun IngredientListScreen(
                         Text("Add More")
                     }
                     Button(onClick = { viewModel.clearIngredients() }) {
-                        Text("CLear All")
+                        Text("Clear All")
                     }
                     Button(onClick = { viewModel.showSelectMealType = true }) {
                         Text("Submit")
@@ -111,20 +121,17 @@ fun IngredientListScreen(
                     Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, viewModel.autoMealType.value) }) {
                         Text("Auto Meal Type: ${viewModel.autoMealType.value}")
                     }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "breakfast") }) {
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "Breakfast") }) {
                         Text("Breakfast")
                     }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "lunch") }) {
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "Lunch") }) {
                         Text("Lunch")
                     }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "lunch") }) {
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "Snack") }) {
                         Text("Snack")
                     }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "dinner") }) {
+                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "Dinner") }) {
                         Text("Dinner")
-                    }
-                    Button(onClick = { handleRouteToRecipe(viewModel.ingredientsList, "mid night snack") }) {
-                        Text("Mid Night Snack")
                     }
                 }
             }
@@ -133,6 +140,9 @@ fun IngredientListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
+                    if(showError.value){
+                        Text(text="Please make sure to enter an ingredient name", color = androidx.compose.material3.MaterialTheme.colorScheme.error, modifier =  Modifier.padding(10.dp))
+                    }
                     TextField(
                         value = viewModel.inputIngredientName,
                         onValueChange = { name -> viewModel.updateName(name) },
@@ -169,7 +179,8 @@ fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
 
 
         LazyColumn(
-            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f),
+            modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp * 0.9f).height(
+                LocalConfiguration.current.screenHeightDp.dp * 0.2f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ){ item {
             ingredientList.forEach {
@@ -180,7 +191,6 @@ fun IngredientTable(modifier: Modifier, viewModel: AddViewModel){
                                 viewModel.removeIngredient(it)
                                 true
                             }
-
                             else -> false
                         }
                     }

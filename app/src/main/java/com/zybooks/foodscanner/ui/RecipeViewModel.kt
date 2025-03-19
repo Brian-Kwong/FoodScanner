@@ -45,9 +45,13 @@ class RecipeViewModel : ViewModel() {
     }
 
     fun fetchRecipeInformation(ingredientString : String, mealType : String){
+        if(_loading.value){
+            return
+        }
         coroutine.launch {
             _loading.value = true
-            val results = recipeAPI.getRecipes(apiKey, ingredientString,mealType)
+            val mealtype = mealType.replace("-", " ")
+            val results = recipeAPI.getRecipes(apiKey, ingredientString,mealtype)
             recipes.clear()
             recipes.addAll(results)
             _noResults.value = results.isEmpty()
@@ -67,4 +71,10 @@ class RecipeViewModel : ViewModel() {
     fun setNoResultsStatus(status: Boolean) {
         _noResults.value = status
     }
+
+    fun setLoadStatus(status: Boolean) {
+        _loading.value = status
+    }
+
+
 }
