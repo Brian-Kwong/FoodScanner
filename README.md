@@ -104,5 +104,11 @@ Visit our [App Website](https://staging.d2fhzzegitvejc.amplifyapp.com/)
 ```
 
   
-3. Make sure you using Android 7.1 Nougat 🍫 or higher with at least API Level 25.
+3. Make sure you are using Android 7.1 Nougat 🍫 or higher with at least API Level 25.
+
+## Model
+
+The dataset we trained our model originally from was based on a food computer vision dataset found on [Roboflow](https://universe.roboflow.com/food-recipe-ingredient-images-0gnku/food-ingredients-dataset)  While there are direct trained models available on Roboflow, we decided to use [Google's TensorFlow model maker](https://ai.google.dev/edge/litert/libraries/modify/object_detection) to train the model as it is more efficient to run on mobile devices with limited compute capability.  The [model training](https://drive.google.com/drive/folders/1RnakbpL7GSO0hmTB3mH0_pHYJby18jND?usp=drive_link) occurs in Python and is exported as a `.tflite` file which we integrated into Kotlin with the Tensor Flow Lite Vision API for Android to execute the model 
+
+If you would like to train the model yourself, make sure to have `python 3.9`, `tensorflow 2.09`, and `tflite-model-maker` installed.  For GPU acceleration you will also need the `CUDA 11.1` toolkit installed. Then run `model2.py` to train the model.  Model training could take upwards of 8+ hours depending on available GPU/CPU power.  Lower your batch size or change to a lower-end model such as `efficientdet_lite0` or `efficientdet_lite1` if you run into VRAM issues, though accuracy could degrade.
 
